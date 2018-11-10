@@ -1,0 +1,11 @@
+{
+    "name": "LogisticRequestHint",
+    "version": "0.0.1",
+    "title": "Logistic Request Hint",
+    "author": "Luke Marlin",
+    "contact": "luke.marlin@viacesi.fr",
+    "homepage": "github.com/LukeMarlin",
+    "factorio_version": "0.16",
+    "dependencies": ["base >= 0.16"],
+    "description": "Tells you whether or not your logistic requests can be fulfilled"
+}
