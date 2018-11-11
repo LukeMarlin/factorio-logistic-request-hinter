@@ -13,5 +13,12 @@ data:extend({
         setting_type = "runtime-per-user",
         default_value = 5,
         order = "2"
+    },
+    {
+        type = "bool-setting",
+        name = "logistic-request-hinter-show-frame-caption",
+        setting_type = "runtime-per-user",
+        default_value = true,
+        order = "3"
     }
 })

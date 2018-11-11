@@ -29,13 +29,27 @@ function fill_request_table(player, requests)
 end
 
 function create_hinter_gui(player)
+
     if settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "top" then
         hinter_gui = player.gui.top.add{type="frame", name="logistic_request_hinter"}
     else
         hinter_gui = player.gui.left.add{type="frame", name="logistic_request_hinter"}
     end
+
+    if settings.get_player_settings(player)["logistic-request-hinter-show-frame-caption"].value then
+        hinter_gui.caption = "Logistic requests"
+    end
+
     hinter_gui.style.visible = false
     hinter_gui.add{type="table", column_count=settings.get_player_settings(player)["logistic-request-hinter-column-count"].value}
+end
+
+function is_gui_outdated(player_settings)
+    return player_settings["logistic-request-hinter-ui-position"].value == "top" and not is_top
+        or player_settings["logistic-request-hinter-ui-position"].value == "left" and is_top
+        or hinter_gui.children[1].column_count ~= player_settings["logistic-request-hinter-column-count"].value
+        or hinter_gui.caption ~= "" and not player_settings["logistic-request-hinter-show-frame-caption"].value
+        or hinter_gui.caption == "" and player_settings["logistic-request-hinter-show-frame-caption"].value
 end
 
 function process_player(player)
@@ -56,9 +70,7 @@ function process_player(player)
     else
     -- We found an existing reference, replacing it if necessary based on settings (that might have changed since then)
         is_top = hinter_gui.parent == player.gui.top
-        if settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "top" and not is_top 
-            or settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "left" and is_top
-            or hinter_gui.children[1].column_count ~= settings.get_player_settings(player)["logistic-request-hinter-column-count"].value then
+        if is_gui_outdated(settings.get_player_settings(player)) then
             -- Misplaced or incorrectly sized, destroying it and restart processing
             hinter_gui.destroy()
             hinter_gui = nil
