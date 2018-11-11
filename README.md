@@ -1,6 +1,7 @@
 # Logistic Request Hinter
 A small mod for Factorio that shows you the status of your logistic requests
 
+![In-game screenshot](https://user-images.githubusercontent.com/4253581/48316790-04c11d80-e5e0-11e8-9f0d-19eeee3fa3a3.png)
 ## Features
 
 This mod show you whether or not your requests can be fulfilled by the network you're in.
