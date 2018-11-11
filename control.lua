@@ -1,6 +1,3 @@
---hinter_gui.destroy()
---hinter_gui = nil
-
 function fill_request_table(player, requests)
 
     if requests["fulfilling"] == nil and requests["cant_fulfill"] == nil then
@@ -31,16 +28,42 @@ function fill_request_table(player, requests)
     end
 end
 
+function create_hinter_gui(player)
+    if settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "top" then
+        hinter_gui = player.gui.top.add{type="frame", name="logistic_request_hinter"}
+    else
+        hinter_gui = player.gui.left.add{type="frame", name="logistic_request_hinter"}
+    end
+    hinter_gui.style.visible = false
+    hinter_gui.add{type="table", column_count=settings.get_player_settings(player)["logistic-request-hinter-column-count"].value}
+end
+
 function process_player(player)
 
     if hinter_gui == nil then
-        hinter_gui = player.gui.top.logistic_request_hinter
+    -- We have no reference to the UI but it might be there, trying to get it
+        if settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "top" then
+            hinter_gui = player.gui.top.logistic_request_hinter
+        else
+            hinter_gui = player.gui.left.logistic_request_hinter
+        end
     end
 
+    
     if hinter_gui == nil then
-        hinter_gui = player.gui.top.add{type="frame", name="logistic_request_hinter"}
-        hinter_gui.style.visible = false
-        hinter_gui.add{type="table", column_count=10}
+    -- It does not exist at all, creating it
+        create_hinter_gui(player)
+    else
+    -- We found an existing reference, replacing it if necessary based on settings (that might have changed since then)
+        is_top = hinter_gui.parent == player.gui.top
+        if settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "top" and not is_top 
+            or settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "left" and is_top
+            or hinter_gui.children[1].column_count ~= settings.get_player_settings(player)["logistic-request-hinter-column-count"].value then
+            -- Misplaced or incorrectly sized, destroying it and restart processing
+            hinter_gui.destroy()
+            hinter_gui = nil
+            return process_player(player)
+        end
     end
 
     character = player.character
