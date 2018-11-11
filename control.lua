@@ -122,7 +122,6 @@ function process_player(player)
 
         if missing_qty > 0 then
             needed_items[item_name] = missing_qty
-            --player.print(item_name .. ": " .. needed_items[item_name])
         end
     end
 
@@ -148,18 +147,10 @@ end
 
 script.on_event({defines.events.on_tick},
     function (e)
-        if e.tick % 150 == 0 then --common trick to reduce how often this runs, we don't want it running every tick, just once per 2.5 second
-            for _, player in pairs(game.connected_players) do  --loop through all online players on the server
+        if e.tick % 150 == 0 then -- Run once every 2.5 seconds
+            for _, player in pairs(game.connected_players) do
                 process_player(player)
             end
         end
     end
 )
-
---player_index :: uint: The player.
---gui_type :: defines.gui_type: The GUI type that was open.
---entity :: LuaEntity (optional): The entity that was open
---item :: LuaItemStack (optional): The item that was open
---equipment :: LuaEquipment (optional): The equipment that was open
---other_player :: LuaPlayer (optional): The other player that was open
---element :: LuaGuiElement (optional): The custom GUI element that was open
