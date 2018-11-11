@@ -83,7 +83,12 @@ function process_player(player)
     if character == nil then return end
 
     logistic_slots = character.get_logistic_point()
-    player_logistic_requester = logistic_slots[1] --TODO: check if exists
+    player_logistic_requester = logistic_slots[1]
+
+    if player_logistic_requester == nil then
+        return
+    end
+
     filters = player_logistic_requester.filters
     network = character.force.find_logistic_network_by_position(player.position, player.surface)
     if network == nil or filters == nil then
