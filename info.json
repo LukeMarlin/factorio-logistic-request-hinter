@@ -1,11 +1,11 @@
 {
     "name": "LogisticRequestHint",
-    "version": "0.0.1",
+    "version": "0.9.0",
     "title": "Logistic Request Hint",
     "author": "Luke Marlin",
     "contact": "luke.marlin@viacesi.fr",
-    "homepage": "github.com/LukeMarlin",
+    "homepage": "https://github.com/LukeMarlin/factorio-logistic-request-hinter",
     "factorio_version": "0.16",
     "dependencies": ["base >= 0.16"],
-    "description": "Tells you whether or not your logistic requests can be fulfilled"
+    "description": "Tells you whether or not your logistic requests can be fulfilled. An orange background indicates a request that is going to be fulfilled, a red background indicates that items are missing from the network. Special thanks to Bilka and TheStaplerGun for the tips and to Gangsir for his wiki tutorial on modding"
 }
