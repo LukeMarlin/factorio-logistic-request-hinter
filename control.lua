@@ -1,27 +1,47 @@
-if global["hinter_gui"] == nil then global["hinter_gui"] = {} end
-hinter_frame_captions = {fulfilling = "Being fulfilled", cant_fulfill = "Can't fulfill"}
+--hinter_gui.destroy()
+--hinter_gui = nil
 
-function fill_request_table(player, type, requests)
+function fill_request_table(player, requests)
 
-    if type == "fulfilling" then
-        style = "fulfilling_slot"
+    if requests["fulfilling"] == nil and requests["cant_fulfill"] == nil then
+        if hinter_gui ~= nil then
+            hinter_gui.style.visible = false
+        end
+        return
     else
-        style = "cant_fulfill_slot"
+        hinter_gui.style.visible = true
     end
 
-    if global["hinter_gui"][type] == nil then
-        global["hinter_gui"][type] = player.gui.top.add{type="frame", caption=hinter_frame_captions[type]}
-        global["hinter_gui"][type].add{type="table", column_count=5}
-    else
-        global["hinter_gui"][type].children[1].clear()
+    if hinter_gui.children ~= nil then
+        hinter_gui.children[1].clear()
     end
 
-    for name, qty in pairs(requests) do
-        global["hinter_gui"][type].children[1].add{type="sprite-button", sprite="item/" .. name, number=qty, style=style, enabled=false}
+
+    for type, items in pairs(requests) do
+
+        if type == "fulfilling" then
+            style = "fulfilling_slot"
+        else
+            style = "cant_fulfill_slot"
+        end
+
+        for name, qty in pairs(items) do
+            hinter_gui.children[1].add{type="sprite-button", sprite="item/" .. name, number=qty, style=style, enabled=false}
+        end
     end
 end
 
 function process_player(player)
+
+    if hinter_gui == nil then
+        hinter_gui = player.gui.top.logistic_request_hinter
+    end
+
+    if hinter_gui == nil then
+        hinter_gui = player.gui.top.add{type="frame", name="logistic_request_hinter"}
+        hinter_gui.style.visible = false
+        hinter_gui.add{type="table", column_count=10}
+    end
 
     character = player.character
     if character ~= nil then
@@ -51,7 +71,10 @@ function process_player(player)
                 missing_qty = missing_qty - (ammo[item_name] or 0)
                 missing_qty = missing_qty - (tools[item_name] or 0)
                 missing_qty = missing_qty - (armor[item_name] or 0)
-                --TODO: AJOUTER INVENTAIRE "DANS LA MAIN"
+                if player.cursor_stack.valid_for_read and player.cursor_stack.name == item_name then
+                    missing_qty = missing_qty - player.cursor_stack.count
+                end
+
                 if missing_qty > 0 then
                     needed_items[item_name] = missing_qty
                     --player.print(item_name .. ": " .. needed_items[item_name])
@@ -69,41 +92,15 @@ function process_player(player)
                 if remaining <= 0 then
                     if request_statuses["fulfilling"] == nil then request_statuses["fulfilling"] = {} end
                     request_statuses["fulfilling"][item_name] = item_qty
-                    --player.print("Putting in ffing")
-                    --player.print("Request for item '" .. item_name .. "' is being fulfilled, just wait there!")
                 else
                     if request_statuses["cant_fulfill"] == nil then request_statuses["cant_fulfill"] = {} end
                     request_statuses["cant_fulfill"][item_name] = item_qty
-                    --player.print("Putting in cff")
-                    --player.print("Cannot fulfill request for item '" .. item_name .. "', missing " .. item_qty)
                 end
             end
 
-            if request_statuses["fulfilling"] ~= nil then
-                fill_request_table(player, "fulfilling", request_statuses["fulfilling"], fulfilling_count)
-            else
-                if global["hinter_gui"]["fulfilling"] ~= nil then
-                    global["hinter_gui"]["fulfilling"].destroy()
-                    global["hinter_gui"]["fulfilling"] = nil
-                end
-            end
-            if request_statuses["cant_fulfill"] ~= nil then
-                fill_request_table(player, "cant_fulfill", request_statuses["cant_fulfill"], cant_fulfill_count)
-            else
-                if global["hinter_gui"]["cant_fulfill"] ~= nil then 
-                    global["hinter_gui"]["cant_fulfill"].destroy()
-                    global["hinter_gui"]["cant_fulfill"] = nil
-                end
-            end
-
-            --player.print(gui.help())
-            --for item_name, item_qty in pairs(requested_items) do
-            --    player.print{"", item_name .. item_qty}
-            --end
+            fill_request_table(player, request_statuses)
         else
-            if global["hinter_gui"]["cant_fulfill"] ~= nil then global["hinter_gui"]["cant_fulfill"].destroy() end
-            if global["hinter_gui"]["fulfilling"] ~= nil then global["hinter_gui"]["fulfilling"].destroy() end
-            global["hinter_gui"] = {}
+            hinter_gui.style.visible = false
         end
     end
 end
