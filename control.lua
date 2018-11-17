@@ -1,5 +1,7 @@
 function fill_request_table(player, requests)
 
+    local hinter_gui = global[player.index]
+
     if requests["fulfilling"] == nil and requests["cant_fulfill"] == nil then
         if hinter_gui ~= nil then
             hinter_gui.style.visible = false
@@ -30,6 +32,8 @@ end
 
 function create_hinter_gui(player)
 
+    local hinter_gui = nil
+
     if settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "top" then
         hinter_gui = player.gui.top.add{type="frame", name="logistic_request_hinter"}
     else
@@ -42,9 +46,13 @@ function create_hinter_gui(player)
 
     hinter_gui.style.visible = false
     hinter_gui.add{type="table", column_count=settings.get_player_settings(player)["logistic-request-hinter-column-count"].value}
+
+    global[player.index] = hinter_gui
 end
 
-function is_gui_outdated(player_settings)
+function is_gui_outdated(player)
+    local hinter_gui = global[player.index]
+    local player_settings = settings.get_player_settings(player)
     return player_settings["logistic-request-hinter-ui-position"].value == "top" and not is_top
         or player_settings["logistic-request-hinter-ui-position"].value == "left" and is_top
         or hinter_gui.children[1].column_count ~= player_settings["logistic-request-hinter-column-count"].value
@@ -54,6 +62,8 @@ end
 
 function process_player(player)
 
+    local hinter_gui = global[player.index]
+
     if hinter_gui == nil then
     -- We have no reference to the UI but it might be there, trying to get it
         if settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "top" then
@@ -61,6 +71,7 @@ function process_player(player)
         else
             hinter_gui = player.gui.left.logistic_request_hinter
         end
+        global[player.index] = hinter_gui
     end
 
     
@@ -70,10 +81,10 @@ function process_player(player)
     else
     -- We found an existing reference, replacing it if necessary based on settings (that might have changed since then)
         is_top = hinter_gui.parent == player.gui.top
-        if is_gui_outdated(settings.get_player_settings(player)) then
+        if is_gui_outdated(player) then
             -- Misplaced or incorrectly sized, destroying it and restart processing
             hinter_gui.destroy()
-            hinter_gui = nil
+            global[player.index] = nil
             return process_player(player)
         end
     end
