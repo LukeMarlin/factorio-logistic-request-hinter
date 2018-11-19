@@ -1,18 +1,16 @@
 function fill_request_table(player, requests)
 
-    local hinter_gui = global[player.index]
-
     if requests["fulfilling"] == nil and requests["cant_fulfill"] == nil then
-        if hinter_gui ~= nil then
-            hinter_gui.style.visible = false
+        if global[player.index] ~= nil then
+           global[player.index].style.visible = false
         end
         return
     else
-        hinter_gui.style.visible = true
+       global[player.index].style.visible = true
     end
 
-    if hinter_gui.children ~= nil then
-        hinter_gui.children[1].clear()
+    if global[player.index].children ~= nil then
+        global[player.index].children[1].clear()
     end
 
 
@@ -25,65 +23,58 @@ function fill_request_table(player, requests)
         end
 
         for name, qty in pairs(items) do
-            hinter_gui.children[1].add{type="sprite-button", sprite="item/" .. name, number=qty, style=style, enabled=false}
+            global[player.index].children[1].add{type="sprite-button", sprite="item/" .. name, number=qty, style=style, enabled=false}
         end
     end
 end
 
 function create_hinter_gui(player)
 
-    local hinter_gui = nil
-
     if settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "top" then
-        hinter_gui = player.gui.top.add{type="frame", name="logistic_request_hinter"}
+        global[player.index] = player.gui.top.add{type="frame", name="logistic_request_hinter"}
     else
-        hinter_gui = player.gui.left.add{type="frame", name="logistic_request_hinter"}
+        global[player.index] = player.gui.left.add{type="frame", name="logistic_request_hinter"}
     end
 
     if settings.get_player_settings(player)["logistic-request-hinter-show-frame-caption"].value then
-        hinter_gui.caption = "Logistic requests"
+        global[player.index].caption = "Logistic requests"
     end
 
-    hinter_gui.style.visible = false
-    hinter_gui.add{type="table", column_count=settings.get_player_settings(player)["logistic-request-hinter-column-count"].value}
+    global[player.index].style.visible = false
+    global[player.index].add{type="table", column_count=settings.get_player_settings(player)["logistic-request-hinter-column-count"].value}
 
-    global[player.index] = hinter_gui
 end
 
 function is_gui_outdated(player)
-    local hinter_gui = global[player.index]
     local player_settings = settings.get_player_settings(player)
     return player_settings["logistic-request-hinter-ui-position"].value == "top" and not is_top
         or player_settings["logistic-request-hinter-ui-position"].value == "left" and is_top
-        or hinter_gui.children[1].column_count ~= player_settings["logistic-request-hinter-column-count"].value
-        or hinter_gui.caption ~= "" and not player_settings["logistic-request-hinter-show-frame-caption"].value
-        or hinter_gui.caption == "" and player_settings["logistic-request-hinter-show-frame-caption"].value
+        or global[player.index].children[1].column_count ~= player_settings["logistic-request-hinter-column-count"].value
+        or global[player.index].caption ~= "" and not player_settings["logistic-request-hinter-show-frame-caption"].value
+        or global[player.index].caption == "" and player_settings["logistic-request-hinter-show-frame-caption"].value
 end
 
 function process_player(player)
 
-    local hinter_gui = global[player.index]
-
-    if hinter_gui == nil then
+    if global[player.index] == nil then
     -- We have no reference to the UI but it might be there, trying to get it
         if settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "top" then
-            hinter_gui = player.gui.top.logistic_request_hinter
+            global[player.index] = player.gui.top.logistic_request_hinter
         else
-            hinter_gui = player.gui.left.logistic_request_hinter
+            global[player.index] = player.gui.left.logistic_request_hinter
         end
-        global[player.index] = hinter_gui
     end
 
     
-    if hinter_gui == nil then
+    if global[player.index] == nil then
     -- It does not exist at all, creating it
         create_hinter_gui(player)
     else
     -- We found an existing reference, replacing it if necessary based on settings (that might have changed since then)
-        is_top = hinter_gui.parent == player.gui.top
+        is_top = global[player.index].parent == player.gui.top
         if is_gui_outdated(player) then
             -- Misplaced or incorrectly sized, destroying it and restart processing
-            hinter_gui.destroy()
+            global[player.index].destroy()
             global[player.index] = nil
             return process_player(player)
         end
@@ -103,7 +94,7 @@ function process_player(player)
     filters = player_logistic_requester.filters
     network = character.force.find_logistic_network_by_position(player.position, player.surface)
     if network == nil or filters == nil then
-        hinter_gui.style.visible = false
+        global[player.index].style.visible = false
         return
     end
 
