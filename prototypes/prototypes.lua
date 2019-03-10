@@ -3,17 +3,11 @@ local default_gui = data.raw["gui-style"].default
 function redbuttongraphcialset()
   return
   {
-    type = "monolith",
-    monolith_border = 1,
-    monolith_image =
-    {
-      filename = "__core__/graphics/gui.png",
-      priority = "extra-high-no-scale",
-      width = 36,
-      height = 36,
-      x = 111,
-      y = 36
-    }
+    border = 1,
+    filename = "__core__/graphics/gui.png",
+    position = {111, 36},
+    size = 36,
+    scale = 1
   }
 end
 

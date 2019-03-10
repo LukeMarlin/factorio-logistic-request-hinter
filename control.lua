@@ -2,11 +2,11 @@ function fill_request_table(player, requests)
 
     if requests["fulfilling"] == nil and requests["cant_fulfill"] == nil then
         if global[player.index] ~= nil then
-           global[player.index].style.visible = false
+           global[player.index].visible = false
         end
         return
     else
-       global[player.index].style.visible = true
+       global[player.index].visible = true
     end
 
     if global[player.index].children ~= nil then
@@ -40,7 +40,7 @@ function create_hinter_gui(player)
         global[player.index].caption = "Logistic requests"
     end
 
-    global[player.index].style.visible = false
+    global[player.index].visible = false
     global[player.index].add{type="table", column_count=settings.get_player_settings(player)["logistic-request-hinter-column-count"].value}
 
 end
@@ -94,16 +94,14 @@ function process_player(player)
     filters = player_logistic_requester.filters
     network = character.force.find_logistic_network_by_position(player.position, player.surface)
     if network == nil or filters == nil then
-        global[player.index].style.visible = false
+        global[player.index].visible = false
         return
     end
 
-    quickbar = character.get_quickbar().get_contents()
     main_inventory = character.get_main_inventory().get_contents()
     guns = character.get_inventory(defines.inventory.player_guns).get_contents()
     ammo = character.get_inventory(defines.inventory.player_ammo).get_contents()
-    tools = character.get_inventory(defines.inventory.player_armor).get_contents()
-    armor = character.get_inventory(defines.inventory.player_tools).get_contents()
+    armor = character.get_inventory(defines.inventory.player_armor).get_contents()
     on_the_way_items = player_logistic_requester.targeted_items_deliver
 
     -- Looking into player inventories and checking its
@@ -112,11 +110,9 @@ function process_player(player)
     for _, filter in ipairs(filters) do
         item_name = filter.name
         missing_qty = filter.count
-        missing_qty = missing_qty - (quickbar[item_name] or 0)
         missing_qty = missing_qty - (main_inventory[item_name] or 0)
         missing_qty = missing_qty - (guns[item_name] or 0)
         missing_qty = missing_qty - (ammo[item_name] or 0)
-        missing_qty = missing_qty - (tools[item_name] or 0)
         missing_qty = missing_qty - (armor[item_name] or 0)
         if player.cursor_stack.valid_for_read and player.cursor_stack.name == item_name then
             missing_qty = missing_qty - player.cursor_stack.count
