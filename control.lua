@@ -65,7 +65,7 @@ function process_player(player)
         end
     end
 
-    
+
     if global[player.index] == nil then
     -- It does not exist at all, creating it
         create_hinter_gui(player)
@@ -99,9 +99,9 @@ function process_player(player)
     end
 
     main_inventory = character.get_main_inventory().get_contents()
-    guns = character.get_inventory(defines.inventory.player_guns).get_contents()
-    ammo = character.get_inventory(defines.inventory.player_ammo).get_contents()
-    armor = character.get_inventory(defines.inventory.player_armor).get_contents()
+    guns = character.get_inventory(defines.inventory.character_guns).get_contents()
+    ammo = character.get_inventory(defines.inventory.character_ammo).get_contents()
+    armor = character.get_inventory(defines.inventory.character_armor).get_contents()
     on_the_way_items = player_logistic_requester.targeted_items_deliver
 
     -- Looking into player inventories and checking its
