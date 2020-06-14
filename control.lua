@@ -65,7 +65,6 @@ function process_player(player)
         end
     end
 
-
     if global[player.index] == nil then
     -- It does not exist at all, creating it
         create_hinter_gui(player)
