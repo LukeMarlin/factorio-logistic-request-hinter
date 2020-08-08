@@ -146,8 +146,49 @@ script.on_event({defines.events.on_tick},
     function (e)
         if e.tick % 150 == 0 then -- Run once every 2.5 seconds
             for _, player in pairs(game.connected_players) do
-                process_player(player)
+                if global["vars"][player.index]["disable_ui"] or not player.character_personal_logistic_requests_enabled then -- player requested to disable the UI, we completely skip the processing
+                    if global[player.index] ~= nil then
+                        global[player.index].visible = false
+                    end
+                else
+                    process_player(player)
+                end
             end
         end
     end
 )
+
+script.on_event({defines.events.on_player_joined_game},
+    function (event)
+        if global["vars"] == nil then
+            global["vars"] = {}
+        end
+
+        if global["vars"][event.player_index] == nil then
+            global["vars"][event.player_index] = {}
+        end
+        if global["vars"][event.player_index]["disable_ui"] == nil then
+            global["vars"][event.player_index]["disable_ui"] = false
+        end
+    end
+)
+
+script.on_event("hide-hinter-gui",
+    function(event)
+        disable_gui(event.player_index)
+    end
+)
+
+function disable_gui(player_index)
+    disabled_by_player = global["vars"][player_index]["disable_ui"]
+    if disabled_by_player then
+        global["vars"][player_index]["disable_ui"] = false
+    else
+        global["vars"][player_index]["disable_ui"] = true
+    end
+
+    -- make the action immediate instead of waiting for next trigger
+    if global[player_index] ~= nil then
+        global[player_index].visible = not global["vars"][player_index]["disable_ui"]
+    end
+end

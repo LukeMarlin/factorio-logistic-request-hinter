@@ -8,7 +8,7 @@ This mod show you whether or not your requests can be fulfilled by the network y
 * An orange background indicates a request that is going to be fulfilled
 * A red background indicates that items are missing from the network
 
-A refresh is made every 2.5 seconds
+A refresh is made every 2.5 seconds, and the UI is not shown when the logistic requests are deactivated.
 
 ## Available configuration
 
@@ -17,6 +17,7 @@ Any of the following 3 settings can be changed in-game at will
 * UI can be placed on top or left
 * Column count can be changed to better suit your style
 * UI Title can be hidden
+* A shortcut to toggle UI visibility (default: SHIFT + K)
 
 ## Thanks
 
