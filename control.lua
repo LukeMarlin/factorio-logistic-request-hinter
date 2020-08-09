@@ -45,6 +45,19 @@ function create_hinter_gui(player)
 
 end
 
+function init(player)
+    if global["vars"] == nil then
+        global["vars"] = {}
+    end
+
+    if global["vars"][player.index] == nil then
+        global["vars"][player.index] = {}
+    end
+    if global["vars"][player.index]["disable_ui"] == nil then
+        global["vars"][player.index]["disable_ui"] = false
+    end
+end
+
 function is_gui_outdated(player)
     local player_settings = settings.get_player_settings(player)
     return player_settings["logistic-request-hinter-ui-position"].value == "top" and not is_top
@@ -55,7 +68,6 @@ function is_gui_outdated(player)
 end
 
 function process_player(player)
-
     if global[player.index] == nil then
     -- We have no reference to the UI but it might be there, trying to get it
         if settings.get_player_settings(player)["logistic-request-hinter-ui-position"].value == "top" then
@@ -146,6 +158,7 @@ script.on_event({defines.events.on_tick},
     function (e)
         if e.tick % 150 == 0 then -- Run once every 2.5 seconds
             for _, player in pairs(game.connected_players) do
+                init(player)
                 if global["vars"][player.index]["disable_ui"] or not player.character_personal_logistic_requests_enabled then -- player requested to disable the UI, we completely skip the processing
                     if global[player.index] ~= nil then
                         global[player.index].visible = false
@@ -154,21 +167,6 @@ script.on_event({defines.events.on_tick},
                     process_player(player)
                 end
             end
-        end
-    end
-)
-
-script.on_event({defines.events.on_player_joined_game},
-    function (event)
-        if global["vars"] == nil then
-            global["vars"] = {}
-        end
-
-        if global["vars"][event.player_index] == nil then
-            global["vars"][event.player_index] = {}
-        end
-        if global["vars"][event.player_index]["disable_ui"] == nil then
-            global["vars"][event.player_index]["disable_ui"] = false
         end
     end
 )
