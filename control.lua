@@ -158,6 +158,10 @@ script.on_event({defines.events.on_tick},
     function (e)
         if e.tick % 150 == 0 then -- Run once every 2.5 seconds
             for _, player in pairs(game.connected_players) do
+                if player.character == nil then
+                    return
+                end
+
                 init(player)
                 if global["vars"][player.index]["disable_ui"] or not player.character_personal_logistic_requests_enabled then -- player requested to disable the UI, we completely skip the processing
                     if global[player.index] ~= nil then
