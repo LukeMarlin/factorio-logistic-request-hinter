@@ -1,6 +1,6 @@
 function fill_request_table(player, requests)
 
-    if requests["fulfilling"] == nil and requests["cant_fulfill"] == nil then
+    if requests["on_the_way"] == nil and requests["waiting"] == nil and requests["missing"] == nil then
         if global[player.index] ~= nil then
            global[player.index].visible = false
         end
@@ -15,15 +15,9 @@ function fill_request_table(player, requests)
 
 
     for type, items in pairs(requests) do
-
-        if type == "fulfilling" then
-            style = "fulfilling_slot"
-        else
-            style = "cant_fulfill_slot"
-        end
-
+      
         for name, qty in pairs(items) do
-            global[player.index].children[1].add{type="sprite-button", sprite="item/" .. name, number=qty, style=style, enabled=false}
+            global[player.index].children[1].add{type="sprite-button", sprite="item/" .. name, number=qty, style=type, enabled=false}
         end
     end
 end
@@ -139,15 +133,21 @@ function process_player(player)
     -- Now that we know what's needed, let's see if the
     -- player is in a network and what that network offers
     for item_name, item_qty in pairs(needed_items) do
-        remaining = item_qty
-        remaining = remaining - (on_the_way_items[item_name] or 0)
-        remaining = remaining - (network.get_item_count(item_name) or 0)
-        if remaining <= 0 then
-            if request_statuses["fulfilling"] == nil then request_statuses["fulfilling"] = {} end
-            request_statuses["fulfilling"][item_name] = item_qty
-        else
-            if request_statuses["cant_fulfill"] == nil then request_statuses["cant_fulfill"] = {} end
-            request_statuses["cant_fulfill"][item_name] = item_qty
+        on_the_way = (on_the_way_items[item_name] or 0)
+        remaining = item_qty - on_the_way
+        missing = remaining - (network.get_item_count(item_name) or 0)
+        waiting = remaining - math.max(missing, 0)
+        if on_the_way > 0 then
+          if request_statuses["on_the_way"] == nil then request_statuses["on_the_way"] = {} end
+          request_statuses["on_the_way"][item_name] = on_the_way
+        end
+        if waiting > 0 then
+          if request_statuses["waiting"] == nil then request_statuses["waiting"] = {} end
+          request_statuses["waiting"][item_name] = waiting
+        end
+        if missing > 0 then
+          if request_statuses["missing"] == nil then request_statuses["missing"] = {} end
+          request_statuses["missing"][item_name] = missing
         end
     end
 
