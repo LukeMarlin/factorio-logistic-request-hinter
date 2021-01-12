@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.3.0
+Date: 2021-01-12
+
+  Improvement:
+    - Show a difference if the requested items are 'on the way' or just
+      waiting in the network (By wahlencraft)
+
+---------------------------------------------------------------------------------------------------
 Version: 1.2.4
 Date: 2020-12-15
 
