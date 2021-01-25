@@ -16,10 +16,10 @@ yellow_disabled_graphical_set = {
   }
 }
 
-grey_disabled_graphical_set = {
+bright_yellow_disabled_graphical_set = {
   base = {
     border = 4,
-    position = {480, 816},
+    position = {160, 816},
     size = 80
   }
 }
@@ -27,10 +27,10 @@ grey_disabled_graphical_set = {
 default_gui.on_the_way = {
     type = "button_style",
     parent = "slot_button",
-    default_graphical_set =  grey_disabled_graphical_set,
-    hovered_graphical_set =  grey_disabled_graphical_set,
-    clicked_graphical_set = grey_disabled_graphical_set,
-    disabled_graphical_set = grey_disabled_graphical_set
+    default_graphical_set =  bright_yellow_disabled_graphical_set,
+    hovered_graphical_set =  bright_yellow_disabled_graphical_set,
+    clicked_graphical_set = bright_yellow_disabled_graphical_set,
+    disabled_graphical_set = bright_yellow_disabled_graphical_set
 }
 
 default_gui.waiting = {
