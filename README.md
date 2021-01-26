@@ -5,7 +5,8 @@ A small mod for Factorio that shows you the status of your logistic requests
 ## Features
 
 This mod show you whether or not your requests can be fulfilled by the network you're in.
-* An orange background indicates a request that is going to be fulfilled
+* A Yellow background indicates a request that is on it's way
+* A darker yellow background indicates a request that is going to be fulfilled, but there is currently no logistic robots fetching it.
 * A red background indicates that items are missing from the network
 
 A refresh is made every 2.5 seconds, and the UI is not shown when the logistic requests are deactivated.
