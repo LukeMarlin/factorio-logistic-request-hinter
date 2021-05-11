@@ -71,11 +71,11 @@ function process_player(player)
         end
     end
 
-    if global[player.index] == nil then
-    -- It does not exist at all, creating it
+    if global[player.index] == nil or not global[player.index].valid then
+        -- Either we found no existing reference, or it is now invalid, creating it
         create_hinter_gui(player)
     else
-    -- We found an existing reference, replacing it if necessary based on settings (that might have changed since then)
+        -- We found an existing reference, replacing it if necessary based on settings (that might have changed since then)
         is_top = global[player.index].parent == player.gui.top
         if is_gui_outdated(player) then
             -- Misplaced or incorrectly sized, destroying it and restart processing
